@@ -1,4 +1,4 @@
-package com.plung.imagesearchapp
+package com.plung.imagesearchapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,6 +7,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.plung.imagesearchapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

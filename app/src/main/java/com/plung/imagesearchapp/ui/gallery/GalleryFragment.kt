@@ -1,14 +1,16 @@
 package com.plung.imagesearchapp.ui.gallery
 
-import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.databinding.FragmentGalleryBinding
 import com.plung.imagesearchapp.di.Constants
@@ -20,11 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate) {
     private lateinit var adapter: UnsplashPhotoAdapter
     private val viewModel: GalleryViewModel by viewModels()
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
-    }
+    private var spanCount: Int = 2
 
     override fun initViews() {
         adapter = UnsplashPhotoAdapter {
@@ -32,6 +30,8 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
         }
         binding.apply {
             recyclerView.setHasFixedSize(true)
+            recyclerView.layoutManager =
+                GridLayoutManager(requireContext(), spanCount)
             recyclerView.itemAnimator = null
             recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
                 header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
@@ -39,6 +39,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             )
             buttonRetry.setOnClickListener { adapter.retry() }
         }
+        setHasOptionsMenu(true)
     }
 
     override fun initDataState() {
@@ -71,7 +72,6 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-
         inflater.inflate(R.menu.menu_photos, menu)
     }
 
@@ -81,20 +81,17 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 onCLickSearchAction(item)
                 true
             }
-            R.id.action_span_count_2 -> {
-                updateAdapterWithSpan(2)
-                true
-            }
-            R.id.action_span_count_3 -> {
-                updateAdapterWithSpan(3)
+            R.id.action_span_count_change -> {
+                showDialog()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun updateAdapterWithSpan(spanCount: Int) {
-
+    private fun updateGridLayoutManager(spanCount: Int) {
+        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), spanCount)
+        adapter.notifyItemRangeChanged(Constants.INITIAL, adapter.itemCount)
     }
 
     private fun onCLickSearchAction(searchItem: MenuItem) {
@@ -113,6 +110,21 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 return true
             }
         })
+    }
+    private fun showDialog(){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext(), android.R.style.Theme_DeviceDefault_Dialog)
+        builder.setTitle("Set Span Count")
+        val input = EditText(requireContext())
+        input.hint = "Enter Number of Spans"
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+        builder.setView(input)
+        builder.setPositiveButton("OK") { dialog, _ ->
+            updateGridLayoutManager(Integer.valueOf(input.text.toString()))
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+
+        builder.show()
     }
 
 }
