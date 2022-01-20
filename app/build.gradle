@@ -1,12 +1,14 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
     id 'kotlin-kapt'
     id "androidx.navigation.safeargs.kotlin"
     id 'dagger.hilt.android.plugin'
 }
 // Unsplash API access key
-def unsplash_access_key = "\"UwbV7gVzSPFsjrDRUIohdy2GykPCX-LZITz6AQ9aBjo\""
+def UNSPLASH_ACCESS_KEY = "\"UwbV7gVzSPFsjrDRUIohdy2GykPCX-LZITz6AQ9aBjo\""
+def BASE_URL = "\"https://api.unsplash.com/\""
 
 android {
     compileSdk project.compileSdkVersion
@@ -19,7 +21,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "UNSPLASH_ACCESS_KEY", unsplash_access_key)
+        buildConfigField("String", "UNSPLASH_ACCESS_KEY", UNSPLASH_ACCESS_KEY)
+        buildConfigField("String", "BASE_URL", BASE_URL)
     }
 
     buildTypes {

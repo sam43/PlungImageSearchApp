@@ -1,5 +1,6 @@
 package com.plung.imagesearchapp.di
 
+import com.plung.imagesearchapp.BuildConfig.BASE_URL
 import com.plung.imagesearchapp.BuildConfig.DEBUG
 import com.plung.imagesearchapp.api.UnsplashApi
 import dagger.Module
@@ -23,7 +24,8 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder().baseUrl(UnsplashApi.BASE_URL)
+    fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()
