@@ -4,4 +4,7 @@
     <string name="button_retry">Retry</string>
     <string name="msg_no_results_found_for_this_query">No results found for this query</string>
     <string name="img_des_content_image">Content Image</string>
+    <string name="item_search">Search</string>
+    <string name="item_span_count_2">Span 2</string>
+    <string name="item_span_count_3">Span 3</string>
 </resources>

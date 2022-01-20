@@ -3,18 +3,18 @@ package com.plung.imagesearchapp.ui.gallery
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.plung.imagesearchapp.R
-import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.databinding.FragmentGalleryBinding
+import com.plung.imagesearchapp.di.Constants
 import com.plung.imagesearchapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate) {
@@ -68,4 +68,51 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.menu_photos, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_search -> {
+                onCLickSearchAction(item)
+                true
+            }
+            R.id.action_span_count_2 -> {
+                updateAdapterWithSpan(2)
+                true
+            }
+            R.id.action_span_count_3 -> {
+                updateAdapterWithSpan(3)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun updateAdapterWithSpan(spanCount: Int) {
+
+    }
+
+    private fun onCLickSearchAction(searchItem: MenuItem) {
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    binding.recyclerView.scrollToPosition(Constants.INITIAL)
+                    viewModel.searchPhotos(query)
+                    searchView.clearFocus()
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
+    }
+
 }

@@ -15,6 +15,10 @@ class GalleryViewModel @Inject constructor(
     private val repository: UnsplashRepository,
     state: SavedStateHandle
 ) : ViewModel() {
+    companion object {
+        private const val CURRENT_QUERY = "current_query"
+        private const val DEFAULT_QUERY = "office" // i.e: cats, dogs, and so on
+    }
 
     private val currentQuery = state.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
@@ -22,8 +26,7 @@ class GalleryViewModel @Inject constructor(
         repository.getSearchResults(queryString).cachedIn(viewModelScope)
     }
 
-    companion object {
-        private const val CURRENT_QUERY = "current_query"
-        private const val DEFAULT_QUERY = "cats" // i.e: dog, bird and so on
+    fun searchPhotos(query: String) {
+        currentQuery.value = query
     }
 }
