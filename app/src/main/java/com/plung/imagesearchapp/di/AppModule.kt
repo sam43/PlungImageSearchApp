@@ -1,6 +1,16 @@
+/*
+ * *
+ *  * Created by bongo on 1/22/22, 12:53 AM
+ *  * Copyright (c) 2022. All rights reserved.
+ *  * Last modified 1/22/22, 12:30 AM
+ *  * email: scode43@gmail.com
+ *
+ */
+
 package com.plung.imagesearchapp.di
 
 import android.content.Context
+import com.plung.imagesearchapp.BuildConfig
 import com.plung.imagesearchapp.BuildConfig.BASE_URL
 import com.plung.imagesearchapp.BuildConfig.DEBUG
 import com.plung.imagesearchapp.api.UnsplashApi
@@ -9,10 +19,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import okio.Buffer
 import retrofit2.Retrofit
@@ -72,8 +79,9 @@ object AppModule {
     @Named("HeaderInterceptor")
     fun provideHeaderInterceptor(): Interceptor = Interceptor {
         val requestBuilder = it.request().newBuilder()
-        //hear you can add all headers you want by calling 'requestBuilder.addHeader(name ,  value)'
         it.proceed(requestBuilder
+            .addHeader("Accept-Version", "v1")
+            .addHeader("Authorization", "Client-ID ${BuildConfig.UNSPLASH_ACCESS_KEY}")
             .build())
     }
 

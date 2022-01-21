@@ -1,12 +1,9 @@
 <resources>
-    <string name="app_name">Unsplash</string>
+    <string name="app_name">Plugn Unsplash</string>
     <string name="msg_results_could_not_be_loaded">Results could not be loaded</string>
     <string name="button_retry">Retry</string>
     <string name="msg_no_results_found_for_this_query">No results found for this query</string>
     <string name="img_des_content_image">Content Image</string>
     <string name="item_search">Search</string>
     <string name="item_span_count_change">Update Span Count</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

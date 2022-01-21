@@ -1,5 +1,7 @@
 package com.plung.imagesearchapp.di
 
+import com.plung.imagesearchapp.BuildConfig
+
 object Constants {
     // Utils
     const val INITIAL: Int = 0

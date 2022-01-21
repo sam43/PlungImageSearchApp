@@ -7,7 +7,6 @@ import retrofit2.http.Query
 
 interface UnsplashApi {
     // API taken from https://unsplash.com/documentation#search-photos
-    @Headers("Accept-Version: v1", "Authorization: Client-ID ${BuildConfig.UNSPLASH_ACCESS_KEY}")
     @GET("search/photos")
     suspend fun searchPhotos(
         @Query("query") query: String,
