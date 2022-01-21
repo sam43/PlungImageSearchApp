@@ -15,7 +15,7 @@ class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashAp
             config = PagingConfig(
                 pageSize = 20,
                 maxSize = 100,
-                enablePlaceholders = true
+                enablePlaceholders = false
             ),
             pagingSourceFactory = { UnsplashPagingSource(unsplashApi, query) }
         ).liveData

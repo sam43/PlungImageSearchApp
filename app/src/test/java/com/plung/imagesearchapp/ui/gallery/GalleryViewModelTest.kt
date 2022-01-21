@@ -2,8 +2,11 @@ package com.plung.imagesearchapp.ui.gallery
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import androidx.paging.PagingSource
+import androidx.lifecycle.SavedStateHandle
+import androidx.paging.*
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.api.UnsplashResponse
 import com.plung.imagesearchapp.data.UnsplashPagingSource
@@ -13,7 +16,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,17 +27,29 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import java.security.InvalidParameterException
+
 
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class GalleryViewModelTest {
 
-    private val query = "dogs"
-
     lateinit var pagingSource: UnsplashPagingSource
 
     @Mock
+    lateinit var repository: UnsplashRepository
+
+    @Mock
     lateinit var unsplashApi: UnsplashApi
+
+    @Mock
+    lateinit var viewModel: GalleryViewModel
+
+    @Mock
+    lateinit var state: SavedStateHandle
+
+    @Mock
+    private lateinit var observer: Observer<PagingData<UnsplashPhoto>>
 
     /**
      * InstantTaskExecutorRule
@@ -52,8 +69,44 @@ class GalleryViewModelTest {
     fun setUp() {
         MockitoAnnotations.openMocks(this)
         pagingSource = UnsplashPagingSource(unsplashApi, query)
+        repository = UnsplashRepository(unsplashApi = unsplashApi)
+        viewModel = GalleryViewModel(repository, state)
+        viewModel.photos?.observeForever(observer)
     }
 
+    // ViewModel testing
+    @Test
+    fun `view model test with invalid params - returns NULL`() {
+        testCoroutineScope.launch(testDispatcher)  {
+            whenever(unsplashApi.searchPhotos(query, -1, 10).results).thenReturn(null)
+            assertNotNull(viewModel.photos?.value)
+        }
+    }
+
+    @Test
+    fun `view model get photos from api - success`() {
+        testCoroutineScope.launch(testDispatcher)  {
+            // Mock API response
+            whenever (unsplashApi.searchPhotos(query, 1, 20).results).thenReturn(
+                unsplashResponse.results.map {
+                    UnsplashPhoto(it.id)
+                }
+            )
+            viewModel.photos
+            verify(observer).onChanged(
+                Pager(
+                    config = PagingConfig(
+                        pageSize = 20,
+                        maxSize = 100,
+                        enablePlaceholders = true
+                    ),
+                    pagingSourceFactory = { pagingSource }
+                ).liveData.value
+            )
+        }
+    }
+
+        // API testing
     @Test
     fun `http error or content not found - failure - 4xx`() {
         testCoroutineScope.launch(testDispatcher) {
@@ -73,16 +126,16 @@ class GalleryViewModelTest {
     }
 
     @Test
-    fun `http error on authentication - failure - 4xx`() {
+    fun `response error with wrong params - failure - not_valid`() {
         testCoroutineScope.launch(testDispatcher) {
-            val error = RuntimeException("401", Throwable())
-            given(unsplashApi.searchPhotos(any(), any(), any())).willThrow(error)
+            val error = InvalidParameterException()
+            given(unsplashApi.searchPhotos("", -1, 0)).willThrow(error)
             val expectedResult = PagingSource.LoadResult.Error<Int, UnsplashPhoto>(error)
             assertEquals(
                 expectedResult, pagingSource.load(
                     PagingSource.LoadParams.Refresh(
-                        key = 0,
-                        loadSize = 1,
+                        key = null,
+                        loadSize = -1,
                         placeholdersEnabled = false
                     )
                 )
@@ -190,13 +243,20 @@ class GalleryViewModelTest {
         }
     }
 
+    @After
+    @Throws(Exception::class)
+    fun tearDown() {
+        // nothing to-do here we took all lateinit variable
+    }
+
     companion object {
-        val unsplashResponse = UnsplashResponse(
+        private const val query = "dogs"
+        private val unsplashResponse = UnsplashResponse(
             results = listOf(
                 UnsplashPhoto(id = "1"), UnsplashPhoto(id = "2")
             ),
         )
-        val nextUnsplashResponse = UnsplashResponse(
+        private val nextUnsplashResponse = UnsplashResponse(
             results = listOf(
                 UnsplashPhoto(id = "3"), UnsplashPhoto(id = "4")
             ),
