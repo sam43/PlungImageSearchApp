@@ -12,6 +12,7 @@
         tools:src="@drawable/ic_span_count_3"
         app:layout_constraintDimensionRatio="H,1:1"
         android:scaleType="centerCrop"
+        android:transitionName="image_small"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

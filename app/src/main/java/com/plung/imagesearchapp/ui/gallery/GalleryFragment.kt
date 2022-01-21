@@ -5,14 +5,19 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.databinding.FragmentGalleryBinding
+import com.plung.imagesearchapp.databinding.ItemUnsplashPhotoBinding
 import com.plung.imagesearchapp.di.Constants
 import com.plung.imagesearchapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,8 +30,12 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     private var spanCount: Int = 2
 
     override fun initViews() {
-        adapter = UnsplashPhotoAdapter {
-            // implement what to do with onClick action
+        adapter = UnsplashPhotoAdapter { itemView, photo ->
+            val extras = FragmentNavigatorExtras(itemView.imageView to "image_big")
+            findNavController().navigate(
+                GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo.urls.full),
+                extras
+            )
         }
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -37,6 +46,12 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
                 footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
             )
+/*            postponeEnterTransition()
+            recyclerView.viewTreeObserver
+                .addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
+                }*/
             buttonRetry.setOnClickListener { adapter.retry() }
         }
         setHasOptionsMenu(true)
@@ -126,5 +141,4 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
 
         builder.show()
     }
-
 }

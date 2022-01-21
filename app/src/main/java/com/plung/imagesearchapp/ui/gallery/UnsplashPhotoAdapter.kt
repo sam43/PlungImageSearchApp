@@ -11,7 +11,7 @@ import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.databinding.ItemUnsplashPhotoBinding
 
-class UnsplashPhotoAdapter(private val callback: (UnsplashPhoto) -> Unit) :
+class UnsplashPhotoAdapter(private val callback: (ItemUnsplashPhotoBinding, UnsplashPhoto) -> Unit) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
@@ -31,7 +31,7 @@ class UnsplashPhotoAdapter(private val callback: (UnsplashPhoto) -> Unit) :
 
     inner class PhotoViewHolder(
         private val binding: ItemUnsplashPhotoBinding,
-        callback: (UnsplashPhoto) -> Unit
+        callback: (ItemUnsplashPhotoBinding, UnsplashPhoto) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -41,7 +41,7 @@ class UnsplashPhotoAdapter(private val callback: (UnsplashPhoto) -> Unit) :
                 if (position != RecyclerView.NO_POSITION) {
                     val item = getItem(position)
                     if (item != null) {
-                        callback(item)
+                        callback(binding, item)
                     }
                 }
             }

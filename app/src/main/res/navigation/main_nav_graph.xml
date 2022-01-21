@@ -8,5 +8,22 @@
         android:id="@+id/galleryFragment"
         android:name="com.plung.imagesearchapp.ui.gallery.GalleryFragment"
         android:label="Gallery"
-        tools:layout="@layout/fragment_gallery"/>
+        tools:layout="@layout/fragment_gallery">
+        <action
+            android:id="@+id/action_galleryFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.plung.imagesearchapp.ui.details.DetailsFragment"
+        android:label="Photo"
+        tools:layout="@layout/fragment_details">
+<!--        <argument
+            android:name="photo"
+            app:argType="com.plung.imagesearchapp.data.UnsplashPhoto" />-->
+        <argument
+            android:name="photo_url"
+            app:argType="string"
+            app:nullable="true"/>
+    </fragment>
 </navigation>
