@@ -66,6 +66,11 @@ dependencies {
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
+    // For ui, unit, and instrumented tests.
+    testImplementation("com.google.dagger:hilt-android-testing:2.38.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
 
     //LifeCycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -82,4 +87,9 @@ dependencies {
 
     // Paging 3
     implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }

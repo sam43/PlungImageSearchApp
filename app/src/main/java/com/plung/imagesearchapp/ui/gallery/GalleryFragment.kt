@@ -127,7 +127,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     binding.recyclerView.scrollToPosition(Constants.INITIAL)
-                    viewModel.searchPhotos(query)
+                    viewModel.searchPhotos(query.trim())
                     searchView.clearFocus()
                 }
                 return true
