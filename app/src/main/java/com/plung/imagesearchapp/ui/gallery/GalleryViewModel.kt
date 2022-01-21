@@ -24,7 +24,7 @@ class GalleryViewModel @Inject constructor(
 
     companion object {
         private const val CURRENT_QUERY = "current_query"
-        private const val DEFAULT_QUERY = "office" // i.e: cats, dogs, and so on
+        private const val DEFAULT_QUERY = "bangladesh" // i.e: cats, dogs, and so on
     }
 
     private val currentQuery = state?.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
