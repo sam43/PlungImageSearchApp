@@ -1,5 +1,5 @@
 # PlungImageSearchApp
-Plung recruitment assignment projectproject
+Plung recruitment assignment project.
 
 # Features
 - Image list will be loaded on the start
@@ -22,3 +22,9 @@ without calling further API call
 - Navigation, ViewModel, LiveData, etc. from Jetpack components
 - SearchView and Search Query Listener to search image
 - Shared Transition between starting from gird and ends to the details page
+
+## Excluding bonus requirement
+- Bonus #2: <br/>
+Once on the full screen activity the user can swipe left/right to see the next/previous
+images. The reverse shared element transition should respect the current image visible
+on the full screen.
