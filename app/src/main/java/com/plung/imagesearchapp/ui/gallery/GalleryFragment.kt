@@ -4,6 +4,7 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
@@ -30,10 +31,11 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     private var spanCount: Int = 2
 
     override fun initViews() {
+        postponeEnterTransition()
         adapter = UnsplashPhotoAdapter { itemView, photo ->
             val extras = FragmentNavigatorExtras(itemView.imageView to "image_big")
             findNavController().navigate(
-                GalleryFragmentDirections.actionGalleryFragmentToDetailsFragment(photo.urls.full),
+                GalleryFragmentDirections.actionGalleryFragmentToFullscreenActivity(photo.urls.full),
                 extras
             )
         }
@@ -46,12 +48,11 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
                 footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
             )
-/*            postponeEnterTransition()
             recyclerView.viewTreeObserver
-                .addOnPreDrawListener {
+                ?.addOnPreDrawListener {
                     startPostponedEnterTransition()
                     true
-                }*/
+                }
             buttonRetry.setOnClickListener { adapter.retry() }
         }
         setHasOptionsMenu(true)
@@ -126,8 +127,10 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             }
         })
     }
-    private fun showDialog(){
-        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext(), android.R.style.Theme_DeviceDefault_Dialog)
+
+    private fun showDialog() {
+        val builder: AlertDialog.Builder =
+            AlertDialog.Builder(requireContext(), android.R.style.Theme_DeviceDefault_Dialog)
         builder.setTitle("Set Span Count")
         val input = EditText(requireContext())
         input.hint = "Enter Number of Spans"

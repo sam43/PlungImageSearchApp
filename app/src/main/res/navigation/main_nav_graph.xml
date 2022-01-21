@@ -10,20 +10,35 @@
         android:label="Gallery"
         tools:layout="@layout/fragment_gallery">
         <action
+            android:id="@+id/action_galleryFragment_to_fullscreenActivity"
+            app:destination="@id/fullscreenActivity"
+            app:popUpToInclusive="true"/>
+        <action
             android:id="@+id/action_galleryFragment_to_detailsFragment"
-            app:destination="@id/detailsFragment"/>
+            app:destination="@id/detailsFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/detailsFragment"
-        android:name="com.plung.imagesearchapp.ui.details.DetailsFragment"
+    <activity
+        android:id="@+id/fullscreenActivity"
+        android:name="com.plung.imagesearchapp.ui.details.FullscreenActivity"
         android:label="Photo"
-        tools:layout="@layout/fragment_details">
-<!--        <argument
-            android:name="photo"
-            app:argType="com.plung.imagesearchapp.data.UnsplashPhoto" />-->
+        tools:layout="@layout/activity_fullscreen">
+
         <argument
             android:name="photo_url"
             app:argType="string"
-            app:nullable="true"/>
+            app:nullable="true"
+            android:defaultValue=""/>
+
+    </activity>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.plung.imagesearchapp.ui.details.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="photo_url"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue=""/>
     </fragment>
 </navigation>

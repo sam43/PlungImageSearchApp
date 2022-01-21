@@ -6,4 +6,7 @@
     <string name="img_des_content_image">Content Image</string>
     <string name="item_search">Search</string>
     <string name="item_span_count_change">Update Span Count</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
