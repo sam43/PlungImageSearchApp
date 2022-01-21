@@ -10,6 +10,7 @@
 package com.plung.imagesearchapp.ui.gallery
 
 import android.content.Intent
+import android.os.Bundle
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
@@ -28,10 +29,13 @@ import com.plung.imagesearchapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.ui.details.PhotoDetailsActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.navigation.fragment.findNavController
 
 
 @AndroidEntryPoint
@@ -39,16 +43,26 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     private lateinit var adapter: UnsplashPhotoAdapter
     private val viewModel: GalleryViewModel by viewModels()
     private var spanCount: Int = 2
+    private var shouldBackPressEnable: Boolean = true
+    private val callback: OnBackPressedCallback =
+        object : OnBackPressedCallback(shouldBackPressEnable /* enabled by default */) {
+            override fun handleOnBackPressed() {
+                if (shouldBackPressEnable) {
+                    findNavController().navigate(GalleryFragmentDirections.actionGalleryFragmentSelf())
+                    shouldBackPressEnable = false
+                }
+            }
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
 
     override fun initViews() {
         postponeEnterTransition()
         adapter = UnsplashPhotoAdapter { itemView, photo ->
             navigateToDetailsPage(itemView, photo)
-/*            val extras = FragmentNavigatorExtras(itemView.imageView to "image_big")
-            findNavController().navigate(
-                GalleryFragmentDirections.actionGalleryFragmentToFullscreenActivity(photo.urls.regular),
-                extras
-            )*/
         }
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -126,6 +140,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     private fun updateGridLayoutManager(spanCount: Int) {
+        if (spanCount > 5) return
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), spanCount)
         adapter.notifyItemRangeChanged(Constants.INITIAL, adapter.itemCount)
     }
@@ -150,10 +165,10 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
 
     private fun showDialog() {
         val builder: AlertDialog.Builder =
-            AlertDialog.Builder(requireContext(), android.R.style.Theme_DeviceDefault_Dialog)
+            AlertDialog.Builder(requireContext(), android.R.style.Theme_DeviceDefault_Light_Dialog)
         builder.setTitle("Set Span Count")
         val input = EditText(requireContext())
-        input.hint = "Enter Number of Spans"
+        input.hint = "5 (no more than 5)"
         input.inputType = InputType.TYPE_CLASS_NUMBER
         builder.setView(input)
         builder.setPositiveButton("OK") { dialog, _ ->
