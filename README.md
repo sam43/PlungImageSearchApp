@@ -1,5 +1,6 @@
-# PlungImageSearchApp
-Plung recruitment assignment project.
+# Plung - Image Search App
+Plung recruitment assignment project. <br/> 
+Requirement list: https://drive.google.com/file/d/1Hr6byNKANnNFdzLoi10H7sVbJUpq76kN/view?usp=sharing
 
 # Features
 - Image list will be loaded on the start
