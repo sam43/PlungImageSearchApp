@@ -62,7 +62,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
 
     private fun navigateToDetailsPage(itemView: ItemUnsplashPhotoBinding, photo: UnsplashPhoto) {
         val intent = Intent(requireContext(), PhotoDetailsActivity::class.java)
-        intent.putExtra("photo_url", photo.urls.regular)
+        intent.putExtra("photo_url", photo.urls?.regular)
         val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
             requireActivity(), Pair(itemView.imageView, "image_big")
         )
@@ -92,7 +92,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     override fun initObservers() {
-        viewModel.photos.observe(viewLifecycleOwner) {
+        viewModel.photos?.observe(viewLifecycleOwner) {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }

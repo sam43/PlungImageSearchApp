@@ -1,12 +1,15 @@
 package com.plung.imagesearchapp.di
 
+import android.content.Context
 import com.plung.imagesearchapp.BuildConfig.BASE_URL
 import com.plung.imagesearchapp.BuildConfig.DEBUG
 import com.plung.imagesearchapp.api.UnsplashApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -14,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import okio.Buffer
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -35,12 +39,14 @@ object AppModule {
     fun provideOkHttpClient(
         @Named("HeaderInterceptor") headerInterceptor: Interceptor,
         @Named("CurlInterceptor") curlInterceptor: Interceptor,
+        cache: Cache,
         loggerInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient().newBuilder()
         okHttpClientBuilder.connectTimeout(Constants.CONNECTION_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpClientBuilder.readTimeout(Constants.READ_TIMEOUT.toLong(), TimeUnit.SECONDS)
         okHttpClientBuilder.writeTimeout(Constants.WRITE_TIMEOUT.toLong(), TimeUnit.SECONDS)
+        okHttpClientBuilder.cache(cache)
         okHttpClientBuilder.addInterceptor(headerInterceptor)
         if (DEBUG) {
             okHttpClientBuilder.addInterceptor(loggerInterceptor)
@@ -53,6 +59,13 @@ object AppModule {
     @Singleton
     fun provideUnsplashApi(retrofit: Retrofit): UnsplashApi =
         retrofit.create(UnsplashApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCache(@ApplicationContext context: Context): Cache {
+        val httpCacheDirectory = File(context.cacheDir.absolutePath, "HttpCache")
+        return Cache(httpCacheDirectory, Constants.CACHE_SIZE_BYTES)
+    }
 
     @Provides
     @Singleton

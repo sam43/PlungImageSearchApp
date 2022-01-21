@@ -3,8 +3,10 @@ package com.plung.imagesearchapp.data
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.plung.imagesearchapp.api.UnsplashApi
+import com.plung.imagesearchapp.ui.gallery.GalleryViewModel
 import retrofit2.HttpException
 import java.io.IOException
+import javax.inject.Inject
 
 private const val UNSPLASH_STARTING_PAGE_INDEX = 1
 
@@ -12,6 +14,9 @@ class UnsplashPagingSource(
     private val unsplashApi: UnsplashApi,
     private val query: String
 ) : PagingSource<Int, UnsplashPhoto>() {
+
+    @Inject
+    lateinit var viewModel: GalleryViewModel
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, UnsplashPhoto> {
         val position = params.key ?: UNSPLASH_STARTING_PAGE_INDEX

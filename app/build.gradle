@@ -55,7 +55,16 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation 'com.google.android.material:material:1.5.0'
+
+    // Unit Testing dependencies
     testImplementation "junit:junit:$junitVersion"
+    testImplementation 'org.mockito:mockito-core:4.2.0'
+    testImplementation "android.arch.core:core-testing:1.1.1"
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.0'
+    testImplementation 'org.mockito:mockito-inline:4.2.0'
+
+    //Instrument testing dependencies
     androidTestImplementation "androidx.test.ext:junit:$testExtJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
 
@@ -66,11 +75,7 @@ dependencies {
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"
     kapt "com.google.dagger:hilt-android-compiler:$hiltVersion"
-    // For ui, unit, and instrumented tests.
-    testImplementation("com.google.dagger:hilt-android-testing:2.38.1")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
-    // ...with Kotlin.
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0'
 
     //LifeCycle
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
@@ -87,6 +92,17 @@ dependencies {
 
     // Paging 3
     implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
+
+/*    //MockK
+    def mockk_version = "1.10.0"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    androidTestImplementation "io.mockk:mockk-android:$mockk_version"*/
+    // hilt testing
+    // For unit, and instrumented tests.
+    testImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    // ...with Kotlin.
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
 }
 
 // Allow references to generated code
