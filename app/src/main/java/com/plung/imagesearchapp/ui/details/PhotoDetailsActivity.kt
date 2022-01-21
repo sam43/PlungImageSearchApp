@@ -1,39 +1,42 @@
 package com.plung.imagesearchapp.ui.details
 
-import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionInflater
+import androidx.navigation.NavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.plung.imagesearchapp.R
-import com.plung.imagesearchapp.databinding.FragmentDetailsBinding
-import com.plung.imagesearchapp.ui.base.BaseFragment
+import com.plung.imagesearchapp.databinding.ActivityDetailsBinding
+import com.plung.imagesearchapp.ui.utils.hideSystemUI
 import dagger.hilt.android.AndroidEntryPoint
 
-@SuppressLint("SetTextI18n")
 @AndroidEntryPoint
-class DetailsFragment : BaseFragment<FragmentDetailsBinding>(FragmentDetailsBinding::inflate) {
+class PhotoDetailsActivity : AppCompatActivity() {
 
-    private val args by navArgs<DetailsFragmentArgs>()
+    private lateinit var navController: NavController
+    private lateinit var photoUrl: String
+
+    private lateinit var binding: ActivityDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        hideSystemUI()
+        retrieveIntent()
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(requireContext())
-            .inflateTransition(R.transition.shared_transition)
+        binding = ActivityDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        initViews()
     }
 
-    override fun initDataState() {
-        // Adding this work here because the initViews method is getting bigger (naming convention might hurt)
-        if (args.photoUrl == null) return
+    private fun initViews() {
         binding.apply {
-            Glide.with(requireContext())
-                .load(args.photoUrl)
+            Glide.with(this@PhotoDetailsActivity)
+                .load(photoUrl)
                 .error(R.drawable.ic_error)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -42,8 +45,8 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(FragmentDetailsBind
                         target: Target<Drawable>?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        //progressBar.isVisible = false
                         startPostponedEnterTransition()
+                        progressBar.isVisible = false
                         return false
                     }
 
@@ -54,8 +57,8 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(FragmentDetailsBind
                         dataSource: DataSource?,
                         isFirstResource: Boolean
                     ): Boolean {
-                        //progressBar.isVisible = false
                         startPostponedEnterTransition()
+                        progressBar.isVisible = false
                         return false
                     }
                 })
@@ -63,14 +66,11 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>(FragmentDetailsBind
         }
     }
 
-    override fun initViews() {
-        postponeEnterTransition()
-        val animation = TransitionInflater.from(requireContext()).inflateTransition(
-            R.transition.shared_transition
-        )
-        sharedElementEnterTransition = animation
-        sharedElementReturnTransition = animation
+    private fun retrieveIntent() {
+        photoUrl = if (intent.getStringExtra("photo_url") != null) intent.getStringExtra("photo_url").toString() else ""
     }
 
-    override fun initObservers() {}
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
 }

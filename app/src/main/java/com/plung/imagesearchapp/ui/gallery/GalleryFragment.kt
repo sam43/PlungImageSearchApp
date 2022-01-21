@@ -1,27 +1,28 @@
 package com.plung.imagesearchapp.ui.gallery
 
+import android.content.Intent
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.databinding.FragmentGalleryBinding
 import com.plung.imagesearchapp.databinding.ItemUnsplashPhotoBinding
 import com.plung.imagesearchapp.di.Constants
 import com.plung.imagesearchapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
+import com.plung.imagesearchapp.R
+import com.plung.imagesearchapp.data.UnsplashPhoto
+import com.plung.imagesearchapp.ui.details.PhotoDetailsActivity
 
 
 @AndroidEntryPoint
@@ -33,11 +34,12 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     override fun initViews() {
         postponeEnterTransition()
         adapter = UnsplashPhotoAdapter { itemView, photo ->
-            val extras = FragmentNavigatorExtras(itemView.imageView to "image_big")
+            navigateToDetailsPage(itemView, photo)
+/*            val extras = FragmentNavigatorExtras(itemView.imageView to "image_big")
             findNavController().navigate(
-                GalleryFragmentDirections.actionGalleryFragmentToFullscreenActivity(photo.urls.full),
+                GalleryFragmentDirections.actionGalleryFragmentToFullscreenActivity(photo.urls.regular),
                 extras
-            )
+            )*/
         }
         binding.apply {
             recyclerView.setHasFixedSize(true)
@@ -56,6 +58,15 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             buttonRetry.setOnClickListener { adapter.retry() }
         }
         setHasOptionsMenu(true)
+    }
+
+    private fun navigateToDetailsPage(itemView: ItemUnsplashPhotoBinding, photo: UnsplashPhoto) {
+        val intent = Intent(requireContext(), PhotoDetailsActivity::class.java)
+        intent.putExtra("photo_url", photo.urls.regular)
+        val options: ActivityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            requireActivity(), Pair(itemView.imageView, "image_big")
+        )
+        startActivity(intent, options.toBundle())
     }
 
     override fun initDataState() {

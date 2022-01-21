@@ -50,7 +50,7 @@ class UnsplashPhotoAdapter(private val callback: (ItemUnsplashPhotoBinding, Unsp
         fun bind(photo: UnsplashPhoto) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(photo.urls.regular)
+                    .load(photo.urls.thumb)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error)
