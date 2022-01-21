@@ -50,13 +50,13 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 if (shouldBackPressEnable) {
                     findNavController().navigate(GalleryFragmentDirections.actionGalleryFragmentSelf())
                     shouldBackPressEnable = false
-                }
+                } else super.isEnabled()
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        //requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun initViews() {
