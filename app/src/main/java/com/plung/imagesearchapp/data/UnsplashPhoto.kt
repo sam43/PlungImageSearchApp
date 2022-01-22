@@ -11,15 +11,14 @@ import kotlinx.parcelize.Parcelize
 data class UnsplashPhoto(
     @PrimaryKey(autoGenerate = false) val id: String,
     var description: String? = null,
-    @Embedded
     var urls: UnsplashPhotoUrls? = null
-) : Parcelable {
-    @Parcelize
-    data class UnsplashPhotoUrls(
-        val raw: String,
-        val full: String,
-        val regular: String,
-        val small: String,
-        val thumb: String
-    ) : Parcelable
-}
+) : Parcelable
+
+@Parcelize
+data class UnsplashPhotoUrls(
+    val raw: String,
+    val full: String,
+    val regular: String,
+    val small: String,
+    val thumb: String
+) : Parcelable

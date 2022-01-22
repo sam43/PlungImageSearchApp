@@ -9,17 +9,16 @@
 
 package com.plung.imagesearchapp.paging
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.data.UnsplashPhoto
-import com.plung.imagesearchapp.data.UnsplashRepository
 import com.plung.imagesearchapp.offline.PhotosDao
 import com.plung.imagesearchapp.offline.UnsplashRemoteKey
 import java.io.InvalidObjectException
-import javax.inject.Inject
 
 @ExperimentalPagingApi
 class UnsplashRemoteMediator(
@@ -82,17 +81,22 @@ class UnsplashRemoteMediator(
         }
     }
 
-    private suspend fun getClosestRemoteKeys(state: PagingState<Int, UnsplashPhoto>): UnsplashRemoteKey? =
-        state.anchorPosition?.let {
+    private suspend fun getClosestRemoteKeys(state: PagingState<Int, UnsplashPhoto>): UnsplashRemoteKey? {
+        val stateValue = state.anchorPosition?.let {
             state.closestItemToPosition(it)?.let { model ->
                 photosDao.fetchPhotosRemoteKey(model.id)
             }
         }
+        Log.d(TAG, "getClosestRemoteKeys() called with: state = $state")
+        return stateValue
+    }
 
     private suspend fun getLastRemoteKey(state: PagingState<Int, UnsplashPhoto>): UnsplashRemoteKey? =
-        state.anchorPosition?.let {
-            state.lastItemOrNull()?.let { model ->
-                photosDao.fetchPhotosRemoteKey(model.id)
-            }
+        state.lastItemOrNull()?.let { model ->
+            photosDao.fetchPhotosRemoteKey(model.id)
         }
+
+    companion object {
+        private const val TAG = "UnsplashRemoteMediator"
+    }
 }

@@ -11,22 +11,18 @@ package com.plung.imagesearchapp.offline
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.plung.imagesearchapp.data.UnsplashPhoto
-import javax.inject.Inject
+import com.plung.imagesearchapp.data.UnsplashPhotoUrls
 
 class DbTypeConverter {
 
-    @Inject
-    lateinit var gson: Gson
-
     @TypeConverter
-    fun urlsToString(source: UnsplashPhoto.UnsplashPhotoUrls): String {
-        return gson.toJson(source)
+    fun urlsToString(source: UnsplashPhotoUrls): String {
+        return Gson().toJson(source)
     }
 
     @TypeConverter
-    fun String.stringToUrls(): UnsplashPhoto.UnsplashPhotoUrls {
-        return gson.fromJson(this, UnsplashPhoto.UnsplashPhotoUrls::class.java)
+    fun String.stringToUrls(): UnsplashPhotoUrls {
+        return Gson().fromJson(this, UnsplashPhotoUrls::class.java)
     }
 /*
     @TypeConverter

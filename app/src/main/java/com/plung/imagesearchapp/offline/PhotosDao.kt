@@ -15,7 +15,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.plung.imagesearchapp.data.UnsplashPhoto
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PhotosDao {

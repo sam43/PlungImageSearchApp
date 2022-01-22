@@ -39,11 +39,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import com.plung.imagesearchapp.offline.AppDB
 import com.plung.imagesearchapp.paging.UnsplashPhotoLoadStateAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 @AndroidEntryPoint
 class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate) {
@@ -126,14 +128,14 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     override fun initObservers() {
-/*        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.pager.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.pager?.collectLatest {
                 adapter.submitData(it)
             }
-        }*/
-        viewModel.pager?.observe(viewLifecycleOwner) {
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
+/*        viewModel.pager?.observe(viewLifecycleOwner) {
+            adapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -20,11 +20,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 @HiltViewModel
 class GalleryViewModel @Inject constructor(
@@ -45,23 +44,22 @@ class GalleryViewModel @Inject constructor(
 
     private val currentQuery = state?.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
+/*
     val photos = currentQuery?.switchMap { queryString ->
         repository.getSearchResults(queryString)
             .cachedIn(viewModelScope)
     }
+*/
 
-    val pager = currentQuery?.switchMap { queryString ->
+    val pager = currentQuery?.asFlow()?.flatMapLatest { queryString ->
         Pager(
             PagingConfig(
-                pageSize = 20,
-                5,
-                maxSize = 100,
-                enablePlaceholders = false
+                pageSize = 20
             ),
             remoteMediator = UnsplashRemoteMediator(api, photosDao, queryString)
         ) {
             photosDao.fetchPhotos()
-        }.liveData
+        }.flow
     }
 
     fun searchPhotos(query: String) {
