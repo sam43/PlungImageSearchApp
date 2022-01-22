@@ -93,10 +93,11 @@ dependencies {
     // Paging 3
     implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
 
-/*    //MockK
-    def mockk_version = "1.10.0"
-    testImplementation "io.mockk:mockk:$mockk_version"
-    androidTestImplementation "io.mockk:mockk-android:$mockk_version"*/
+    // Room
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+
     // hilt testing
     // For unit, and instrumented tests.
     testImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")

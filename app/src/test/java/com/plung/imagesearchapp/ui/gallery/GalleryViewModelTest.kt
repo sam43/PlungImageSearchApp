@@ -4,14 +4,15 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.*
+import com.google.gson.Gson
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.api.UnsplashResponse
-import com.plung.imagesearchapp.data.UnsplashPagingSource
 import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.data.UnsplashRepository
+import com.plung.imagesearchapp.paging.UnsplashPagingSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -27,9 +28,11 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
+import retrofit2.Response
 import java.security.InvalidParameterException
 
 
+@ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class GalleryViewModelTest {
@@ -41,6 +44,9 @@ class GalleryViewModelTest {
 
     @Mock
     lateinit var unsplashApi: UnsplashApi
+
+    @Mock
+    lateinit var gson: Gson
 
     @Mock
     lateinit var viewModel: GalleryViewModel
@@ -78,7 +84,7 @@ class GalleryViewModelTest {
     @Test
     fun `view model test with invalid params - returns NULL`() {
         testCoroutineScope.launch(testDispatcher)  {
-            whenever(unsplashApi.searchPhotos(query, -1, 10).results).thenReturn(null)
+            whenever(unsplashApi.searchPhotos(query, -1, 10).body()?.results).thenReturn(null)
             assertNotNull(viewModel.photos?.value)
         }
     }
@@ -87,7 +93,7 @@ class GalleryViewModelTest {
     fun `view model get photos from api - success`() {
         testCoroutineScope.launch(testDispatcher)  {
             // Mock API response
-            whenever (unsplashApi.searchPhotos(query, 1, 20).results).thenReturn(
+            whenever (unsplashApi.searchPhotos(query, 1, 20).body()?.results).thenReturn(
                 unsplashResponse.results.map {
                     UnsplashPhoto(it.id)
                 }
@@ -128,9 +134,8 @@ class GalleryViewModelTest {
     @Test
     fun `response error with wrong params - failure - not_valid`() {
         testCoroutineScope.launch(testDispatcher) {
-            val error = InvalidParameterException()
-            given(unsplashApi.searchPhotos("", -1, 0)).willThrow(error)
-            val expectedResult = PagingSource.LoadResult.Error<Int, UnsplashPhoto>(error)
+            given(unsplashApi.searchPhotos("", -1, 0)).willThrow(InvalidParameterException())
+            val expectedResult = PagingSource.LoadResult.Error<Int, UnsplashPhoto>(InvalidParameterException())
             assertEquals(
                 expectedResult, pagingSource.load(
                     PagingSource.LoadParams.Refresh(
@@ -181,6 +186,7 @@ class GalleryViewModelTest {
     @Test
     fun `photos have loaded by page source - success - initial page`() {
         testCoroutineScope.launch(testDispatcher) {
+            given(unsplashApi.searchPhotos(query, 1, 20)).willReturn(Response.success(unsplashResponse))
             val loadResult = PagingSource.LoadResult.Page(
                 data = unsplashResponse.results.map {
                     UnsplashPhoto(it.id)
@@ -204,7 +210,7 @@ class GalleryViewModelTest {
     @Test
     fun `photos paging source append - success - next page`() {
         testCoroutineScope.launch(testDispatcher) {
-            given(unsplashApi.searchPhotos(any(), any(), any())).willReturn(nextUnsplashResponse)
+            given(unsplashApi.searchPhotos(query, 2, 40)).willReturn(Response.success(nextUnsplashResponse))
             val expectedResult = PagingSource.LoadResult.Page(
                 data = unsplashResponse.results.map { UnsplashPhoto(it.id) },
                 prevKey = 1,
@@ -225,7 +231,7 @@ class GalleryViewModelTest {
     @Test
     fun `photos paging source prepend - success - previous page`() {
         testCoroutineScope.launch(testDispatcher)  {
-            given(unsplashApi.searchPhotos(any(), any(), any())).willReturn(unsplashResponse)
+            given(unsplashApi.searchPhotos(query, 1, 20)).willReturn(Response.success(unsplashResponse))
             val expectedResult = PagingSource.LoadResult.Page(
                 data = unsplashResponse.results.map { UnsplashPhoto(it.id) },
                 prevKey = null,

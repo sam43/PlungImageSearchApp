@@ -1,16 +1,19 @@
 package com.plung.imagesearchapp.data
 
 import android.os.Parcelable
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
+@Entity(tableName = "photos")
 @Parcelize
 data class UnsplashPhoto(
-    val id: String,
+    @PrimaryKey(autoGenerate = false) val id: String,
     var description: String? = null,
-    var urls: UnsplashPhotoUrls? = null,
-    var user: UnsplashUser? = null
+    @Embedded
+    var urls: UnsplashPhotoUrls? = null
 ) : Parcelable {
-
     @Parcelize
     data class UnsplashPhotoUrls(
         val raw: String,
@@ -18,11 +21,5 @@ data class UnsplashPhoto(
         val regular: String,
         val small: String,
         val thumb: String
-    ) : Parcelable
-
-    @Parcelize
-    data class UnsplashUser(
-        val name: String,
-        val username: String
     ) : Parcelable
 }
