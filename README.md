@@ -12,6 +12,7 @@ without calling further API call
 - After tapping on the back, the reverse trasition can be shown afterward.
 - Searching with a keyword during NETWORK_DISCONNECTED, user can simply tap on retry button to resume their search after NETWORK_CONNECTION restored.
 - Infinity scroll has been enabled to the photo list or the Gallery page
+- Offline caching with persistance data
 
 # Used Tools
 - MVVM architecture
@@ -23,6 +24,7 @@ without calling further API call
 - Navigation, ViewModel, LiveData, etc. from Jetpack components
 - SearchView and Search Query Listener to search image
 - Shared Transition between starting from gird and ends to the details page
+- Room Database for network data caching mechanism 
 
 ## Excluding bonus requirement
 - Bonus #2: <br/>
