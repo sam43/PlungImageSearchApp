@@ -9,10 +9,15 @@
 
 package com.plung.imagesearchapp.ui.gallery
 
-import androidx.lifecycle.*
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.cachedIn
+import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.data.UnsplashRepository
-import dagger.assisted.Assisted
+import com.plung.imagesearchapp.offline.PhotosDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -21,7 +26,6 @@ class GalleryViewModel @Inject constructor(
     private val repository: UnsplashRepository,
     state: SavedStateHandle?
 ) : ViewModel() {
-
     companion object {
         private const val CURRENT_QUERY = "current_query"
         private const val DEFAULT_QUERY = "bangladesh" // i.e: cats, dogs, and so on
@@ -29,6 +33,7 @@ class GalleryViewModel @Inject constructor(
 
     private val currentQuery = state?.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
+    @ExperimentalPagingApi
     val photos = currentQuery?.switchMap { queryString ->
         repository.getSearchResults(queryString)
             .cachedIn(viewModelScope)

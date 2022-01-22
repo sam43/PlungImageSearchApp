@@ -8,6 +8,7 @@ object Constants {
 
     // DI helper
     const val TAG: String = "HiltClass"
+    const val DATABASE_NAME: String = "unsplash_db"
     const val READ_TIMEOUT = 30
     const val WRITE_TIMEOUT = 30
     const val CONNECTION_TIMEOUT = 10

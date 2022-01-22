@@ -29,17 +29,28 @@ import com.plung.imagesearchapp.ui.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import androidx.core.util.Pair
 import com.plung.imagesearchapp.R
 import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.ui.details.PhotoDetailsActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
+import com.plung.imagesearchapp.offline.AppDB
+import com.plung.imagesearchapp.paging.UnsplashPhotoLoadStateAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
+@ExperimentalPagingApi
 @AndroidEntryPoint
 class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBinding::inflate) {
+
+    @Inject
+    lateinit var appDB: AppDB
+
     private lateinit var adapter: UnsplashPhotoAdapter
     private val viewModel: GalleryViewModel by viewModels()
     private var spanCount: Int = 2
@@ -115,6 +126,11 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     override fun initObservers() {
+/*        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.pager.collectLatest {
+                adapter.submitData(it)
+            }
+        }*/
         viewModel.photos?.observe(viewLifecycleOwner) {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }

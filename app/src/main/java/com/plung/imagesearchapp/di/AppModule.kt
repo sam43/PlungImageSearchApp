@@ -9,11 +9,18 @@
 
 package com.plung.imagesearchapp.di
 
+import android.app.Application
 import android.content.Context
+import androidx.room.Room
+import com.google.gson.Gson
+import com.plung.imagesearchapp.App
 import com.plung.imagesearchapp.BuildConfig
 import com.plung.imagesearchapp.BuildConfig.BASE_URL
 import com.plung.imagesearchapp.BuildConfig.DEBUG
 import com.plung.imagesearchapp.api.UnsplashApi
+import com.plung.imagesearchapp.data.UnsplashPhoto
+import com.plung.imagesearchapp.offline.AppDB
+import com.plung.imagesearchapp.offline.PhotosDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -149,5 +156,18 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLogger() = HttpLoggingInterceptor.Logger.DEFAULT
+
+    @Provides
+    @Singleton
+    fun provideDataBase(@ApplicationContext context: Context) : AppDB =
+        Room.databaseBuilder(context, AppDB::class.java, Constants.DATABASE_NAME).allowMainThreadQueries().build()
+
+    @Provides
+    @Singleton
+    fun providePhotosDao(db: AppDB): PhotosDao = db.photosDao()
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = Gson()
 
 }

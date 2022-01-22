@@ -1,13 +1,13 @@
 /*
  * *
- *  * Created by bongo on 1/22/22, 12:53 AM
+ *  * Created by bongo on 1/22/22, 10:05 PM
  *  * Copyright (c) 2022. All rights reserved.
- *  * Last modified 1/21/22, 1:11 AM
+ *  * Last modified 1/22/22, 12:53 AM
  *  * email: scode43@gmail.com
  *
  */
 
-package com.plung.imagesearchapp.ui.gallery
+package com.plung.imagesearchapp.paging
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
