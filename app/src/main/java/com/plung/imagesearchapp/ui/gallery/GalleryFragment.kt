@@ -131,7 +131,7 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 adapter.submitData(it)
             }
         }*/
-        viewModel.photos?.observe(viewLifecycleOwner) {
+        viewModel.pager?.observe(viewLifecycleOwner) {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }

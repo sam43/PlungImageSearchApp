@@ -9,10 +9,8 @@
 
 package com.plung.imagesearchapp.data
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.liveData
+import androidx.lifecycle.LiveData
+import androidx.paging.*
 import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.offline.PhotosDao
 import com.plung.imagesearchapp.paging.UnsplashPagingSource
@@ -23,21 +21,15 @@ import javax.inject.Singleton
 
 @Singleton
 class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashApi) {
-    @Inject
-    lateinit var api: UnsplashApi
-
-    @Inject
-    lateinit var photosDao: PhotosDao
-
     @ExperimentalPagingApi
-    fun getSearchResults(query: String) =
+    fun getSearchResults(query: String): LiveData<PagingData<UnsplashPhoto>> =
         Pager(
             config = PagingConfig(
                 pageSize = 20,
+                5,
                 maxSize = 100,
                 enablePlaceholders = false
             ),
-            remoteMediator = UnsplashRemoteMediator(api, photosDao, query),
-            pagingSourceFactory = { photosDao.fetchPhotos() }
+            pagingSourceFactory = { UnsplashPagingSource(unsplashApi, query) }
         ).liveData
 }

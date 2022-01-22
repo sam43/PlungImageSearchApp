@@ -9,23 +9,35 @@
 
 package com.plung.imagesearchapp.ui.gallery
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.cachedIn
+import androidx.lifecycle.*
+import androidx.paging.*
 import com.plung.imagesearchapp.api.UnsplashApi
+import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.data.UnsplashRepository
 import com.plung.imagesearchapp.offline.PhotosDao
+import com.plung.imagesearchapp.paging.UnsplashRemoteMediator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
+@ExperimentalPagingApi
 @HiltViewModel
 class GalleryViewModel @Inject constructor(
     private val repository: UnsplashRepository,
     state: SavedStateHandle?
 ) : ViewModel() {
+
+    @Inject
+    lateinit var api: UnsplashApi
+
+    @Inject
+    lateinit var photosDao: PhotosDao
+
     companion object {
         private const val CURRENT_QUERY = "current_query"
         private const val DEFAULT_QUERY = "bangladesh" // i.e: cats, dogs, and so on
@@ -33,13 +45,36 @@ class GalleryViewModel @Inject constructor(
 
     private val currentQuery = state?.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
-    @ExperimentalPagingApi
     val photos = currentQuery?.switchMap { queryString ->
         repository.getSearchResults(queryString)
             .cachedIn(viewModelScope)
+    }
+
+    val pager = currentQuery?.switchMap { queryString ->
+        Pager(
+            PagingConfig(
+                pageSize = 20,
+                5,
+                maxSize = 100,
+                enablePlaceholders = false
+            ),
+            remoteMediator = UnsplashRemoteMediator(api, photosDao, queryString)
+        ) {
+            photosDao.fetchPhotos()
+        }.liveData
     }
 
     fun searchPhotos(query: String) {
         currentQuery?.value = query
     }
 }
+
+
+@ExperimentalCoroutinesApi
+fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
+    val observer = Observer<T> { value -> this.trySend(value).isSuccess }
+    observeForever(observer)
+    awaitClose {
+        removeObserver(observer)
+    }
+}.flowOn(Dispatchers.Main.immediate)

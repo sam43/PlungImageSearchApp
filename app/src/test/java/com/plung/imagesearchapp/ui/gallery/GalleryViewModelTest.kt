@@ -46,9 +46,6 @@ class GalleryViewModelTest {
     lateinit var unsplashApi: UnsplashApi
 
     @Mock
-    lateinit var gson: Gson
-
-    @Mock
     lateinit var viewModel: GalleryViewModel
 
     @Mock

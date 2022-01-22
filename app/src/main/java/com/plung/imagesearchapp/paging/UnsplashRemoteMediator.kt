@@ -15,9 +15,11 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.plung.imagesearchapp.api.UnsplashApi
 import com.plung.imagesearchapp.data.UnsplashPhoto
+import com.plung.imagesearchapp.data.UnsplashRepository
 import com.plung.imagesearchapp.offline.PhotosDao
 import com.plung.imagesearchapp.offline.UnsplashRemoteKey
 import java.io.InvalidObjectException
+import javax.inject.Inject
 
 @ExperimentalPagingApi
 class UnsplashRemoteMediator(
