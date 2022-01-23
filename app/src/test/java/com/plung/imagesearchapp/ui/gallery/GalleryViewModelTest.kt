@@ -74,7 +74,7 @@ class GalleryViewModelTest {
         pagingSource = UnsplashPagingSource(unsplashApi, query)
         repository = UnsplashRepository(unsplashApi = unsplashApi)
         viewModel = GalleryViewModel(repository, state)
-        viewModel.photos?.observeForever(observer)
+        viewModel.pager?.observeForever(observer)
     }
 
     // ViewModel testing
@@ -82,7 +82,7 @@ class GalleryViewModelTest {
     fun `view model test with invalid params - returns NULL`() {
         testCoroutineScope.launch(testDispatcher)  {
             whenever(unsplashApi.searchPhotos(query, -1, 10).body()?.results).thenReturn(null)
-            assertNotNull(viewModel.photos?.value)
+            assertNotNull(viewModel.pager?.value)
         }
     }
 
@@ -95,7 +95,7 @@ class GalleryViewModelTest {
                     UnsplashPhoto(it.id)
                 }
             )
-            viewModel.photos
+            viewModel.pager
             verify(observer).onChanged(
                 Pager(
                     config = PagingConfig(
