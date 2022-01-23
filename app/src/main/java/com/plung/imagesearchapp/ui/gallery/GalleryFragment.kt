@@ -37,6 +37,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.plung.imagesearchapp.offline.AppDB
 import com.plung.imagesearchapp.paging.UnsplashPhotoLoadStateAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -73,7 +74,6 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     override fun initViews() {
-        postponeEnterTransition()
         adapter = UnsplashPhotoAdapter { itemView, photo ->
             navigateToDetailsPage(itemView, photo)
         }
@@ -81,7 +81,9 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager =
                 GridLayoutManager(requireContext(), spanCount)
-            recyclerView.itemAnimator = null
+            postponeEnterTransition()
+            //recyclerView.itemAnimator = null
+            (recyclerView.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
                 header = UnsplashPhotoLoadStateAdapter { adapter.retry() },
                 footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
