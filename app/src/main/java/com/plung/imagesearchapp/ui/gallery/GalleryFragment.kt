@@ -128,14 +128,14 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
     }
 
     override fun initObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+/*        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.pager?.collectLatest {
                 adapter.submitData(it)
             }
-        }
-/*        viewModel.pager?.observe(viewLifecycleOwner) {
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
         }*/
+        viewModel.pager?.observe(viewLifecycleOwner) {
+            adapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

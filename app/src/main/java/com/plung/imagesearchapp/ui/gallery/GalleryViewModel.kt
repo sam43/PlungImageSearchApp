@@ -51,7 +51,19 @@ class GalleryViewModel @Inject constructor(
     }
 */
 
-    val pager = currentQuery?.asFlow()?.flatMapLatest { queryString ->
+val pager = currentQuery?.switchMap { queryString ->
+    Pager(
+        PagingConfig(
+            pageSize = 20
+        ),
+        remoteMediator = UnsplashRemoteMediator(api, photosDao, queryString)
+    ) {
+        photosDao.fetchPhotos()
+    }.liveData.cachedIn(viewModelScope)
+}
+
+    // Experimental
+    val pagerFlow = currentQuery?.asFlow()?.flatMapLatest { queryString ->
         Pager(
             PagingConfig(
                 pageSize = 20
@@ -66,13 +78,3 @@ class GalleryViewModel @Inject constructor(
         currentQuery?.value = query
     }
 }
-
-
-@ExperimentalCoroutinesApi
-fun <T> LiveData<T>.asFlow(): Flow<T> = callbackFlow {
-    val observer = Observer<T> { value -> this.trySend(value).isSuccess }
-    observeForever(observer)
-    awaitClose {
-        removeObserver(observer)
-    }
-}.flowOn(Dispatchers.Main.immediate)
