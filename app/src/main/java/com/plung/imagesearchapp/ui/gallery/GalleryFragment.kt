@@ -135,8 +135,10 @@ class GalleryFragment : BaseFragment<FragmentGalleryBinding>(FragmentGalleryBind
                 adapter.submitData(it)
             }
         }*/
-        viewModel.pager?.observe(viewLifecycleOwner) {
-            adapter.submitData(viewLifecycleOwner.lifecycle, it)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.pager?.observe(viewLifecycleOwner) {
+                adapter.submitData(viewLifecycleOwner.lifecycle, it)
+            }
         }
     }
 
