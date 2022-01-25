@@ -1,5 +1,5 @@
 # Plung - Image Search App
-Plung recruitment assignment project. <br/> 
+Sample project with latest android technologies. <br/> 
 Requirement list: https://drive.google.com/file/d/1Hr6byNKANnNFdzLoi10H7sVbJUpq76kN/view?usp=sharing
 
 # Features
