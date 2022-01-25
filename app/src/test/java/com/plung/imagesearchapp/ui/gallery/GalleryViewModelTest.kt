@@ -13,6 +13,7 @@ import com.plung.imagesearchapp.api.UnsplashResponse
 import com.plung.imagesearchapp.data.UnsplashPhoto
 import com.plung.imagesearchapp.data.UnsplashRepository
 import com.plung.imagesearchapp.paging.UnsplashPagingSource
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineDispatcher
@@ -31,13 +32,12 @@ import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.Response
 import java.security.InvalidParameterException
 
-
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class GalleryViewModelTest {
 
-    lateinit var pagingSource: UnsplashPagingSource
+    private lateinit var pagingSource: UnsplashPagingSource
 
     @Mock
     lateinit var repository: UnsplashRepository
@@ -109,7 +109,7 @@ class GalleryViewModelTest {
         }
     }
 
-        // API testing
+    // API testing
     @Test
     fun `http error or content not found - failure - 4xx`() {
         testCoroutineScope.launch(testDispatcher) {
@@ -131,7 +131,7 @@ class GalleryViewModelTest {
     @Test
     fun `response error with wrong params - failure - not_valid`() {
         testCoroutineScope.launch(testDispatcher) {
-            given(unsplashApi.searchPhotos("", -1, 0)).willThrow(InvalidParameterException())
+            given(unsplashApi.searchPhotos("", 1, 0)).willThrow(InvalidParameterException())
             val expectedResult = PagingSource.LoadResult.Error<Int, UnsplashPhoto>(InvalidParameterException())
             assertEquals(
                 expectedResult, pagingSource.load(
